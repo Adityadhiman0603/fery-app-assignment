@@ -1,0 +1,154 @@
+// Main entry point for the Flutter app
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(const FeryApp());
+}
+
+class FeryApp extends StatelessWidget {
+  const FeryApp({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Fery App',
+      theme: ThemeData(
+        brightness: Brightness.dark,
+        primaryColor: Colors.pinkAccent,
+        scaffoldBackgroundColor: Colors.black,
+        textTheme: const TextTheme(
+          bodyText1: TextStyle(color: Colors.white),
+        ),
+      ),
+      initialRoute: '/',
+      routes: {
+        '/': (context) => const LoginScreen(),
+        '/dashboard': (context) => const DashboardScreen(),
+        '/rideDetails': (context) => const RideDetailsScreen(),
+      },
+    );
+  }
+}
+
+// Login Screen
+class LoginScreen extends StatelessWidget {
+  const LoginScreen({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final TextEditingController usernameController = TextEditingController();
+    final TextEditingController passwordController = TextEditingController();
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Login'),
+        centerTitle: true,
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            TextField(
+              controller: usernameController,
+              decoration: const InputDecoration(
+                labelText: 'Username',
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: passwordController,
+              decoration: const InputDecoration(
+                labelText: 'Password',
+                border: OutlineInputBorder(),
+              ),
+              obscureText: true,
+            ),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pushNamed(context, '/dashboard');
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.pinkAccent,
+              ),
+              child: const Text('Login'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// Dashboard Screen
+class DashboardScreen extends StatelessWidget {
+  const DashboardScreen({Key? key}) : super(key: key);
+
+  final List<Map<String, String>> rides = const [
+    {'id': '1', 'name': 'Ride A'},
+    {'id': '2', 'name': 'Ride B'},
+    {'id': '3', 'name': 'Ride C'},
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Dashboard'),
+        centerTitle: true,
+      ),
+      body: ListView.builder(
+        itemCount: rides.length,
+        itemBuilder: (context, index) {
+          return ListTile(
+            title: Text(rides[index]['name']!, style: const TextStyle(color: Colors.white)),
+            trailing: const Icon(Icons.arrow_forward_ios, color: Colors.pinkAccent),
+            onTap: () {
+              Navigator.pushNamed(
+                context,
+                '/rideDetails',
+                arguments: rides[index],
+              );
+            },
+          );
+        },
+      ),
+    );
+  }
+}
+
+// Ride Details Screen
+class RideDetailsScreen extends StatelessWidget {
+  const RideDetailsScreen({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final Map<String, String>? ride = ModalRoute.of(context)?.settings.arguments as Map<String, String>?;
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Ride Details'),
+        centerTitle: true,
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Ride Name: ${ride?['name']}',
+              style: const TextStyle(fontSize: 20, color: Colors.white),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'Ride ID: ${ride?['id']}',
+              style: const TextStyle(fontSize: 18, color: Colors.white),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
